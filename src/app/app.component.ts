@@ -6,13 +6,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 import { CommonModule } from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    MatTabsModule, MatRadioModule,MatIconModule,MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule
+    MatTabsModule,RouterOutlet,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -22,14 +23,14 @@ export class AppComponent implements OnInit {
   wegonData: any = null;
   containerData: any[] = [];
   exceptionData = [
-     { wegon: { system_val: '1112', survey_val: 'fwer', is_manual: true, selected_key: '' } },
+    { wegon: { system_val: '1112', survey_val: 'fwer', is_manual: true, selected_key: '' } },
     { seal: { system_val: 'reer', survey_val: 'ttt', is_manual: true, selected_key: '' } },
     { hazard: { system_val: 'abc', survey_val: 'xyz', is_manual: false, selected_key: '' } },
   ];
 
   selectedTabIndex = 0;
   currentStep = 0;
-  isAnyRadioSelected = false; // Track if any radio button is selected
+  isAnyRadioSelected = false;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({});
@@ -45,9 +46,9 @@ export class AppComponent implements OnInit {
       const entry = exception[key as keyof typeof exception];
 
       if (key === 'wegon') {
-        this.wegonData = entry;
+        this.wegonData = entry; // If 'wegon' exists, set it
       } else {
-        this.containerData.push({ key, data: entry });
+        this.containerData.push({ key, data: entry }); // If not 'wegon', push to containerData
       }
 
       this.form.addControl(this.getDynamicKey(index), this.fb.control(''));
@@ -94,11 +95,8 @@ export class AppComponent implements OnInit {
   }
 
   onRadioChange() {
-    // Check if ANY radio button is selected in ANY step
+    // Track if ANY radio button is selected in ANY step
     this.isAnyRadioSelected = Object.keys(this.form.controls).some(key => this.form.get(key)?.value !== '');
-  
-    // Explicitly trigger UI update for step completion
-    this.form.updateValueAndValidity();
   }
 
   isSubmitEnabled(): boolean {

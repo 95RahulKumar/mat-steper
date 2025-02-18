@@ -1,5 +1,4 @@
-<mat-tab-group [(selectedIndex)]="selectedTabIndex">
-  <!-- Wegon Tab -->
+<!-- <mat-tab-group [(selectedIndex)]="selectedTabIndex">
   <mat-tab *ngIf="wegonData" label="Wegon">
     <h3>Wegon Exception</h3>
     <form [formGroup]="form">
@@ -10,15 +9,12 @@
     </form>
   </mat-tab>
 
-  <!-- Container Tab -->
   <mat-tab *ngIf="containerData.length > 0" label="Container">
     <mat-horizontal-stepper #stepper [(selectedIndex)]="currentStep">
       <mat-step *ngFor="let step of containerData; let i = index"
                 [completed]="isRadioSelected(i + 1)">
         <ng-template matStepLabel>
-          <!-- Empty circle for uncompleted steps -->
           <mat-icon *ngIf="!isRadioSelected(i + 1)">radio_button_unchecked</mat-icon>
-          <!-- Check circle for completed steps -->
           <mat-icon *ngIf="isRadioSelected(i + 1)">check_circle</mat-icon>
         </ng-template>
         
@@ -33,9 +29,9 @@
   </mat-tab>
 </mat-tab-group>
 
-<!-- Navigation Buttons (Outside Tabs) -->
 <div class="action-buttons">
   <button mat-button (click)="prevStep()" [disabled]="selectedTabIndex === 0 && currentStep === 0">Back</button>
   <button mat-button (click)="nextStep()" [disabled]="!isRadioSelected(getCurrentIndex()) || isLastStep()">Next</button>
   <button mat-button (click)="submitData()" [disabled]="!isSubmitEnabled()">Submit</button>
-</div>
+</div> -->
+<router-outlet></router-outlet>

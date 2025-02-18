@@ -1,0 +1,27 @@
+<mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search Rail Number / Wagon ID</mat-label>
+    <input matInput (keyup)="filterData($event)">
+  </mat-form-field>
+  
+  <mat-accordion multi="true">
+    <mat-expansion-panel 
+      *ngFor="let rail of filteredRails"
+      [expanded]="openedAccordion === rail.railNumber"
+      (opened)="openedAccordion = rail.railNumber"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>Rail Number: {{ rail.railNumber }}</mat-panel-title>
+      </mat-expansion-panel-header>
+  
+      <table mat-table [dataSource]="filteredWagons[rail.railNumber]" class="mat-elevation-z8">
+        <ng-container matColumnDef="wagonId">
+          <th mat-header-cell *matHeaderCellDef> Wagon ID </th>
+          <td mat-cell *matCellDef="let element"> {{ element.wagonId }} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-expansion-panel>
+  </mat-accordion>
+  
