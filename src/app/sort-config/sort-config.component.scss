@@ -1,0 +1,21 @@
+mat-list-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.selected {
+  background: rgba(0, 150, 0, 0.1); /* Light green */
+  color: green;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}

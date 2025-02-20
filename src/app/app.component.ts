@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
@@ -8,6 +8,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
+import { SingletonService } from './services/singleton.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,27 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+   ss = inject(SingletonService);
+    dialogData = [
+    {
+      title: 'Exception',
+      items: [
+        { label: 'Newest First', value: 'firstArrival' },
+        { label: 'Oldest First', value: 'lastArrival' },
+        { label: 'Ascending', value: 'ascending' },
+        { label: 'Descending', value: 'descending' },
+      ],
+    },
+    {
+      title: 'Truck',
+      items: [
+        { label: 'Ascending', value: 'ascending' },
+        { label: 'Descending', value: 'descending' },
+      ],
+    },
+  ];
+
+
   form: FormGroup;
   wegonData: any = null;
   containerData: any[] = [];
@@ -34,6 +56,24 @@ export class AppComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({});
+  }
+
+
+  openDialog() {
+    this.ss.openTreeListDialog(this.dialogData).subscribe(result => {
+      if (result) {
+        console.log('Selected:', result);
+      }
+    });
+  }
+
+
+  openFilterDialog() {
+    this.ss.openFilterDialog(this.dialogData).subscribe(result => {
+      if (result) {
+        console.log('Selected:', result);
+      }
+    });
   }
 
   ngOnInit() {

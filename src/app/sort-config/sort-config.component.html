@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Sort Options</h2>
+
+<mat-list>
+  <ng-container *ngFor="let category of data">
+    <h3>{{ category.title }}</h3>
+    <mat-list-item
+      *ngFor="let item of category.items"
+      (click)="selectItem(category.title, item.value)"
+      [class.selected]="isSelected(category.title, item.value)"
+    >
+      <span>{{ item.label }}</span>
+      <span class="spacer"></span>
+      <mat-icon *ngIf="isSelected(category.title, item.value)">done</mat-icon>
+    </mat-list-item>
+  </ng-container>
+</mat-list>
+
+<div class="actions">
+  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button mat-button color="primary" (click)="onApply()" [disabled]="!selectedValue">Apply</button>
+</div>
