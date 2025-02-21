@@ -12,6 +12,7 @@ export class SingletonService {
     return this.dialog.open(SortConfigComponent, {
       data,
       width: '400px',
+      panelClass:'sorting-dialog-pannel',
       disableClose: true, // Prevents closing by clicking outside
     }).afterClosed();
   }
@@ -19,6 +20,7 @@ export class SingletonService {
     return this.dialog.open(FilterConfigComponent, {
       data,
       width: '400px',
+      panelClass:'filter-dialog-pannel',
       disableClose: true, // Prevents closing by clicking outside
     }).afterClosed();
   }
