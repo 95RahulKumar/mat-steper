@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>Sort Options</h2>
-
-<mat-list>
+<div class="dialog">
+<p mat-dialog-title class="dialog__header" >Sort Options</p>
+<mat-list class="dialog__content list">
   <ng-container *ngFor="let category of data">
-    <h3>{{ category.title }}</h3>
-    <mat-list-item
+    <p class="list__heading">{{ category.title }}</p>
+    <mat-list-item class="list__item"
       *ngFor="let item of category.items"
       (click)="selectItem(category.title, item.value)"
       [class.selected]="isSelected(category.title, item.value)"
@@ -14,8 +14,8 @@
     </mat-list-item>
   </ng-container>
 </mat-list>
-
-<div class="actions">
+<div class="dialog__action">
   <button mat-button (click)="closeDialog()">Cancel</button>
   <button mat-button color="primary" (click)="onApply()" [disabled]="!selectedValue">Apply</button>
+</div>
 </div>

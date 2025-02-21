@@ -11,3 +11,16 @@ body {
 .mat-horizontal-stepper-header .mat-step-icon {
   display: none;
 }
+
+.sorting-dialog-pannel {
+  & .mat-mdc-dialog-surface {
+    --mdc-dialog-container-shape: 4px;
+    --mdc-dialog-container-color: #272727;
+    & .mat-mdc-list .mdc-list-item__primary-text {
+      --mdc-list-list-item-label-text-color: #e3e3e3;
+      --mdc-list-list-item-label-text-font: ;
+      --mdc-list-list-item-label-text-size: ;
+      --mdc-list-list-item-label-text-weight: ;
+    }
+  }
+}

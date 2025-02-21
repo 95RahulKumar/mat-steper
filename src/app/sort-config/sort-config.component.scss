@@ -19,3 +19,22 @@ mat-list-item {
   justify-content: flex-end;
   padding: 10px;
 }
+
+.dialog {
+  &__header {
+    color: #f9f9f9;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    margin: 0;
+    background: #191919;
+  }
+  & .list {
+    padding: 20px;
+    &__heading {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+  }
+}
