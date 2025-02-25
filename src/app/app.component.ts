@@ -9,19 +9,20 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { SingletonService } from './services/singleton.service';
+import { SortConfigComponent } from './sort-config/sort-config.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    MatTabsModule,RouterOutlet,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
+    MatTabsModule,RouterOutlet,SortConfigComponent,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
    ss = inject(SingletonService);
-    dialogData = [
+    menuData = [
     {
       title: 'Exception',
       items: [
@@ -59,22 +60,22 @@ export class AppComponent implements OnInit {
   }
 
 
-  openDialog() {
-    this.ss.openTreeListDialog(this.dialogData).subscribe(result => {
-      if (result) {
-        console.log('Selected:', result);
-      }
-    });
-  }
+  // openDialog() {
+  //   this.ss.openTreeListDialog(this.dialogData).subscribe(result => {
+  //     if (result) {
+  //       console.log('Selected:', result);
+  //     }
+  //   });
+  // }
 
 
-  openFilterDialog() {
-    this.ss.openFilterDialog(this.dialogData).subscribe(result => {
-      if (result) {
-        console.log('Selected:', result);
-      }
-    });
-  }
+  // openFilterDialog() {
+  //   this.ss.openFilterDialog(this.dialogData).subscribe(result => {
+  //     if (result) {
+  //       console.log('Selected:', result);
+  //     }
+  //   });
+  // }
 
   ngOnInit() {
     this.processExceptions();

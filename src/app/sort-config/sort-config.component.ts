@@ -1,40 +1,57 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sort-config',
   standalone: true,
-  imports: [MatListModule, CommonModule, MatIconModule, MatButtonModule],
+  imports: [MatListModule, CommonModule, MatMenuModule, MatIconModule, MatButtonModule],
   templateUrl: './sort-config.component.html',
   styleUrl: './sort-config.component.scss'
 })
 export class SortConfigComponent {
-  selectedCategory: string | null = null;
-  selectedValue: string | null = null;
+  selectedCategory: string = 'Exception';
+  selectedValue: string = 'lastArrival';
 
-  constructor(
-    private dialogRef: MatDialogRef<SortConfigComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; items: { label: string; value: string }[] }[]
-  ) {}
+  isSelectionChanged: boolean = false;  
+
+    appliedCategory: string = this.selectedCategory;
+   appliedValue: string = this.selectedValue;
+
+  @Input() menuData: { title: string; items: { label: string; value: string }[] }[] = [];
+  @ViewChild(MatMenuTrigger) matMenuTrigger!: MatMenuTrigger;
+
+  constructor() {
+  }
 
   selectItem(category: string, value: string) {
-    this.selectedCategory = category;
-    this.selectedValue = value;
+      this.selectedCategory = category;
+      this.selectedValue = value;
+      this.isSelectionChanged = true;
   }
 
-  isSelected(category: string, value: string) {
-    return this.selectedCategory === category && this.selectedValue === value;
+  openMenu() {
+    this.isSelectionChanged = false; 
+    if (!this.isSelectionChanged) {
+      this.selectedCategory = this.appliedCategory;
+      this.selectedValue = this.appliedValue;
+    }
   }
 
-  closeDialog(result: any = null) {
-    this.dialogRef.close(result);
+  closeDialog() { 
+    this.matMenuTrigger.closeMenu();
   }
 
   onApply() {
-    this.closeDialog( { sortKey: this.selectedCategory, selectedValue: this.selectedValue });
+    this.appliedCategory = this.selectedCategory;
+    this.appliedValue = this.selectedValue;
+    this.matMenuTrigger.closeMenu();
+  }
+
+  resetInitial(){
+
   }
 }

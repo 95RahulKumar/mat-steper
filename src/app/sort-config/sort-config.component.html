@@ -1,21 +1,27 @@
-<div class="dialog">
-<p mat-dialog-title class="dialog__header" >Sort Options</p>
-<mat-list class="dialog__content list">
-  <ng-container *ngFor="let category of data">
-    <p class="list__heading">{{ category.title }}</p>
-    <mat-list-item class="list__item"
-      *ngFor="let item of category.items"
-      (click)="selectItem(category.title, item.value)"
-      [class.selected]="isSelected(category.title, item.value)"
-    >
-      <span>{{ item.label }}</span>
-      <span class="spacer"></span>
-      <mat-icon *ngIf="isSelected(category.title, item.value)">done</mat-icon>
-    </mat-list-item>
-  </ng-container>
-</mat-list>
-<div class="dialog__action">
-  <button mat-button (click)="closeDialog()">Cancel</button>
-  <button mat-button color="primary" (click)="onApply()" [disabled]="!selectedValue">Apply</button>
-</div>
-</div>
+<button type="button" 
+#matMenuTrigger 
+[matMenuTriggerFor]="menu"
+(menuOpened)="openMenu()">Menu</button>
+
+<mat-menu #menu>
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <p mat-dialog-title class="dialog__header">Sort Options</p>
+    <mat-list class="dialog__content list">
+      <ng-container *ngFor="let menu of menuData">  
+        <p class="list__heading">{{ menu.title }}</p>
+        <mat-list-item class="list__item"
+          *ngFor="let item of menu.items"
+          (click)="selectItem(menu.title, item.value)"
+          [class.selected]="selectedCategory === menu.title && selectedValue === item.value">
+          <span>{{ item.label }}</span>
+          <mat-icon *ngIf="selectedCategory === menu.title && selectedValue === item.value">done</mat-icon>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+
+    <div class="dialog__action">
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="onApply()" [disabled]="!isSelectionChanged">Apply</button>
+    </div>
+  </div>
+</mat-menu>
