@@ -5,18 +5,18 @@
       <ng-container formArrayName="exceptions">
          <!-- If more than one exception, use stepper -->
          <mat-horizontal-stepper *ngIf="groupData.exceptions.length > 1" #stepper [(selectedIndex)]="currentStep">
-          <mat-step *ngFor="let step of groupData.exceptions; let i = index; let globalIndex = count;" 
-          [completed]="isRadioSelected(i+tabIndex)">
+          <mat-step *ngFor="let step of groupData.exceptions; let i = index;" 
+          [completed]="isRadioSelected(i)">
           
           <ng-template matStepLabel>
-            <mat-icon *ngIf="!isRadioSelected(i+tabIndex)">radio_button_unchecked</mat-icon>
-            <mat-icon *ngIf="isRadioSelected(i+tabIndex)">check_circle</mat-icon>
+            <mat-icon *ngIf="!isRadioSelected(i)">radio_button_unchecked</mat-icon>
+            <mat-icon *ngIf="isRadioSelected(i)">check_circle</mat-icon>
           </ng-template>
           
           
-          <ng-container [formGroupName]="i+tabIndex">
-              <mat-radio-group [formControlName]="getDynamicKey(i+tabIndex)" (change)="onRadioChange()">
-                {{i+tabIndex}}
+          <ng-container [formGroupName]="i">
+              <mat-radio-group [formControlName]="getDynamicKey(i)" (change)="onRadioChange()">
+                
                 <mat-radio-button value="predicted_value">Predicted: {{ step.predicted_value?.value }}</mat-radio-button>
                 <mat-radio-button *ngIf="step.tos_value" value="tos_value">TOS: {{ step.tos_value?.value }}</mat-radio-button>
               </mat-radio-group>
