@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +10,29 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { SingletonService } from './services/singleton.service';
 import { SortConfigComponent } from './sort-config/sort-config.component';
+export interface IFlateExceptions
+{
+    group:string,
+    exceptions:IExceptions[]
+}
 
+export interface IExceptions{
+    exception_id: number,
+    exception_category: string,
+    group:string,
+    display_text: string,
+    is_manual: true,
+    predicted_value: {
+      value: string,
+      evidence: string,
+      video_evidence: string,
+    },
+    tos_value: {
+      value: string,
+      evidence: string,
+      video_evidence: string,
+    },
+}
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -22,6 +44,10 @@ import { SortConfigComponent } from './sort-config/sort-config.component';
 })
 export class AppComponent implements OnInit {
    ss = inject(SingletonService);
+
+   selectedTabIndex = 0;
+   currentStep = 0;
+
     menuData = [
     {
       title: 'Exception',
@@ -45,102 +71,175 @@ export class AppComponent implements OnInit {
   form: FormGroup;
   wegonData: any = null;
   containerData: any[] = [];
-  exceptionData = [
-    { wegon: { system_val: '1112', survey_val: 'fwer', is_manual: true, selected_key: '' } },
-    { seal: { system_val: 'reer', survey_val: 'ttt', is_manual: true, selected_key: '' } },
-    { hazard: { system_val: 'abc', survey_val: 'xyz', is_manual: false, selected_key: '' } },
+   exceptionsData = [
+    {
+      exception_id: 1,
+      exception_category: "truck",
+      display_text: "Truck",
+      is_manual: true,
+      group: "Truck",
+      predicted_value: {
+        value: "HSWW01",
+        evidence: "imageI.jpg",
+        video_evidence: "videoI.mp4",
+      },
+      tos_value: {
+        value: "HSWW03",
+        evidence: "imageJ.jpg",
+        video_evidence: "videoJ.mp4",
+      },
+    },
+    {
+      exception_id: 1,
+      exception_category: "iso",
+      display_text: "Truck",
+      is_manual: true,
+      group: "Truck",
+      predicted_value: {
+        value: "HSWW01",
+        evidence: "imageI.jpg",
+        video_evidence: "videoI.mp4",
+      },
+      tos_value: {
+        value: "HSWW03",
+        evidence: "imageJ.jpg",
+        video_evidence: "videoJ.mp4",
+      },
+    },
+    {
+      exception_id: 1,
+      exception_category: "seals",
+      group: "Container",
+      display_text: "Seals",
+      is_manual: true,
+      predicted_value: {
+        value: "HSWW01",
+        evidence: "imageI.jpg",
+        video_evidence: "videoI.mp4",
+      },
+    },
+    {
+      exception_id: 1,
+      exception_category: "Hazard",
+      group: "Container",
+      display_text: "Hazard",
+      is_manual: true,
+      predicted_value: {
+        value: "HSWW01",
+        evidence: "imageI.jpg",
+        video_evidence: "videoI.mp4",
+      },
+    },
   ];
-
-  selectedTabIndex = 0;
-  currentStep = 0;
   isAnyRadioSelected = false;
 
+
+ flateExceptions:IFlateExceptions[] = []
   constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({});
+    this.form = this.fb.group({
+      exceptions: this.fb.array([]), // FormArray to hold exception FormGroups
+    });
   }
-
-
-  // openDialog() {
-  //   this.ss.openTreeListDialog(this.dialogData).subscribe(result => {
-  //     if (result) {
-  //       console.log('Selected:', result);
-  //     }
-  //   });
-  // }
-
-
-  // openFilterDialog() {
-  //   this.ss.openFilterDialog(this.dialogData).subscribe(result => {
-  //     if (result) {
-  //       console.log('Selected:', result);
-  //     }
-  //   });
-  // }
+ formArray(){
+  return this.form.get('exceptions') as FormArray
+ }
 
   ngOnInit() {
     this.processExceptions();
   }
 
   processExceptions() {
-    this.exceptionData.forEach((exception, index) => {
-      const key = Object.keys(exception)[0];
-      const entry = exception[key as keyof typeof exception];
 
-      if (key === 'wegon') {
-        this.wegonData = entry; // If 'wegon' exists, set it
-      } else {
-        this.containerData.push({ key, data: entry }); // If not 'wegon', push to containerData
-      }
+    this.flateExceptions =  Object.values(
+      this.exceptionsData.reduce((acc:any, item) => {
+        // Get the group key
+        const groupKey = item.group;
+  
+        // Initialize group if it doesn't exist
+        if (!acc[groupKey]) {
+          acc[groupKey] = { group: groupKey, exceptions: [] };
+        }
+  
+        // Push the exception into the respective group
+        acc[groupKey].exceptions.push(item);
+  
+        return acc;
+      }, {})
+    );
+    console.log(this.flateExceptions)
+    this.exceptionsData.forEach((item, index) => {
+      this.formArray().push(
+        this.fb.group({
+          [item.exception_category]: [''],
+          manual: [''],
+        })
+      );
 
-      this.form.addControl(this.getDynamicKey(index), this.fb.control(''));
     });
   }
 
-  getDynamicKey(index: number) {
-    return `exception_${index}`;
+  getDynamicKey(index:number){
+    return this.exceptionsData[index]?.exception_category
+  }
+
+
+  formGroupAtIndex(index: number) {
+    const formArray = this.formArray();
+    const fg = formArray.at(index) as FormGroup;
+    return fg;
   }
 
   isRadioSelected(index: number): boolean {
-    return this.form.get(this.getDynamicKey(index))?.value !== '';
+    debugger
+    // checking if radio button is checked for specific formcontrol
+    // getting form array
+    // we will se if manual valu validation is rquired
+    const fg = this.formGroupAtIndex(index);
+    const mfc = fg?.get('manual');
+    const dynamicFc = fg?.get(this.getDynamicKey(index));
+    return dynamicFc?.value !== '';
+  }
+
+  onRadioChange(){
+
+  }
+
+
+  isFirstStep(): boolean {
+    return this.selectedTabIndex === 0 && this.currentStep === 0;
   }
 
   isLastStep(): boolean {
-    return this.currentStep === this.containerData.length - 1;
+    return (
+      this.selectedTabIndex === this.flateExceptions.length - 1 &&
+      this.currentStep === this.flateExceptions[this.selectedTabIndex].exceptions.length - 1
+    );
   }
 
-  getCurrentIndex(): number {
-    return this.selectedTabIndex === 0 ? 0 : this.currentStep + 1;
+  isSubmitEnabled(): boolean {
+    return this.isLastStep() && this.isRadioSelected(this.currentStep);
   }
 
   nextStep() {
-    if (this.selectedTabIndex === 0) {
-      this.selectedTabIndex = 1; // Move to container tab
-      this.currentStep = 0; // Reset to the first step
-    } else if (this.currentStep < this.containerData.length - 1) {
-      this.currentStep++; // Go to the next step
+    const currentTab = this.flateExceptions[this.selectedTabIndex];
+    if (this.currentStep < currentTab.exceptions.length - 1) {
+      this.currentStep++;
+    } else if (this.selectedTabIndex < this.flateExceptions.length - 1) {
+      this.selectedTabIndex++;
+      this.currentStep = 0;
     }
   }
 
   prevStep() {
     if (this.currentStep > 0) {
-      this.currentStep--; // Go to the previous step
-    } else {
-      this.selectedTabIndex = 0; // Return to the Wegon tab
+      this.currentStep--;
+    } else if (this.selectedTabIndex > 0) {
+      this.selectedTabIndex--;
+      this.currentStep = this.flateExceptions[this.selectedTabIndex].exceptions.length - 1;
     }
   }
 
-  submitData() {
-    if (this.form.valid) {
-      console.log('Submitted Data:', this.form.value);
-    }
-  }
-
-  onRadioChange() {
-    // Track if ANY radio button is selected in ANY step
-    this.isAnyRadioSelected = Object.keys(this.form.controls).some(key => this.form.get(key)?.value !== '');
-  }
-
-  isSubmitEnabled(): boolean {
-    return this.isAnyRadioSelected;
+  submitData(){
+   console.log( this.form.value )
   }
 }

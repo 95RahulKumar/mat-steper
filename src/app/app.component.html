@@ -1,44 +1,50 @@
-<!-- <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-  <mat-tab *ngIf="wegonData" label="Wegon">
-    <h3>Wegon Exception</h3>
-    <form [formGroup]="form">
-      <mat-radio-group formControlName="exception_0" (change)="onRadioChange()">
-        <mat-radio-button value="system_val">System Value: {{ wegonData.system_val }}</mat-radio-button>
-        <mat-radio-button value="survey_val">Survey Value: {{ wegonData.survey_val }}</mat-radio-button>
-      </mat-radio-group>
-    </form>
-  </mat-tab>
-
-  <mat-tab *ngIf="containerData.length > 0" label="Container">
-    <mat-horizontal-stepper #stepper [(selectedIndex)]="currentStep">
-      <mat-step *ngFor="let step of containerData; let i = index"
-                [completed]="isRadioSelected(i + 1)">
-        <ng-template matStepLabel>
-          <mat-icon *ngIf="!isRadioSelected(i + 1)">radio_button_unchecked</mat-icon>
-          <mat-icon *ngIf="isRadioSelected(i + 1)">check_circle</mat-icon>
-        </ng-template>
-        
-        <form [formGroup]="form">
-          <mat-radio-group [formControlName]="getDynamicKey(i + 1)" (change)="onRadioChange()">
-            <mat-radio-button value="system_val">System Value</mat-radio-button>
-            <mat-radio-button value="survey_val">Survey Value</mat-radio-button>
-          </mat-radio-group>
-        </form>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex">
+  <mat-tab *ngFor="let groupData of flateExceptions let tabIndex = index;" [label]="groupData.group">
+    <h3>{{ groupData.group }} Exception</h3>
+    <form [formGroup]="form" class="exception">
+      <ng-container formArrayName="exceptions">
+         <!-- If more than one exception, use stepper -->
+         <mat-horizontal-stepper *ngIf="groupData.exceptions.length > 1" #stepper [(selectedIndex)]="currentStep">
+          <mat-step *ngFor="let step of groupData.exceptions; let i = index; let globalIndex = count;" 
+          [completed]="isRadioSelected(i+tabIndex)">
+          
+          <ng-template matStepLabel>
+            <mat-icon *ngIf="!isRadioSelected(i+tabIndex)">radio_button_unchecked</mat-icon>
+            <mat-icon *ngIf="isRadioSelected(i+tabIndex)">check_circle</mat-icon>
+          </ng-template>
+          
+          
+          <ng-container [formGroupName]="i+tabIndex">
+              <mat-radio-group [formControlName]="getDynamicKey(i+tabIndex)" (change)="onRadioChange()">
+                {{i+tabIndex}}
+                <mat-radio-button value="predicted_value">Predicted: {{ step.predicted_value?.value }}</mat-radio-button>
+                <mat-radio-button *ngIf="step.tos_value" value="tos_value">TOS: {{ step.tos_value?.value }}</mat-radio-button>
+              </mat-radio-group>
+            </ng-container>
+     
       </mat-step>
     </mat-horizontal-stepper>
+    <!-- If only one exception, display radio buttons directly -->
+          <div *ngIf="groupData.exceptions.length === 1">
+              <ng-container [formGroupName]="tabIndex">
+                <mat-radio-group [formControlName]="getDynamicKey(tabIndex)" (change)="onRadioChange()">
+                  <mat-radio-button value="predicted_value">
+                    Predicted: {{ groupData.exceptions[0].predicted_value?.value }}
+                  </mat-radio-button>
+                  <mat-radio-button *ngIf="groupData.exceptions[0].tos_value" value="tos_value">
+                    TOS: {{ groupData.exceptions[0].tos_value?.value }}
+                  </mat-radio-button>
+                </mat-radio-group>
+              </ng-container>
+              </div>
+       </ng-container>
+  </form>
   </mat-tab>
 </mat-tab-group>
 
+<!-- Navigation Buttons -->
 <div class="action-buttons">
-  <button mat-button (click)="prevStep()" [disabled]="selectedTabIndex === 0 && currentStep === 0">Back</button>
-  <button mat-button (click)="nextStep()" [disabled]="!isRadioSelected(getCurrentIndex()) || isLastStep()">Next</button>
+  <button mat-button (click)="prevStep()" [disabled]="isFirstStep()">Back</button>
+  <button mat-button (click)="nextStep()" [disabled]="!isRadioSelected(currentStep) || isLastStep()">Next</button>
   <button mat-button (click)="submitData()" [disabled]="!isSubmitEnabled()">Submit</button>
-</div> -->
-<router-outlet></router-outlet>
-<!-- 
-<button mat-button (click)="openDialog()">openSortConfig</button>
-
-
-<button mat-button (click)="openFilterDialog()">openFilterConfig</button> -->
-
-<app-sort-config [menuData]="menuData"></app-sort-config>
+</div>
