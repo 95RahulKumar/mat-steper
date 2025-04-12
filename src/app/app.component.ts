@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +19,7 @@ export interface IFlateExceptions
 export interface IExceptions{
     exception_id: number,
     exception_category: string,
+    attribute_name:string,
     group:string,
     display_text: string,
     is_manual: true,
@@ -47,7 +48,7 @@ export class AppComponent implements OnInit {
 
    selectedTabIndex = 0;
    currentStep = 0;
-
+   totalSteps:IExceptions[]=[]
     menuData = [
     {
       title: 'Exception',
@@ -84,24 +85,24 @@ export class AppComponent implements OnInit {
         video_evidence: "videoI.mp4",
       },
       tos_value: {
-        value: "HSWW03",
+        value: "HSWW02",
         evidence: "imageJ.jpg",
         video_evidence: "videoJ.mp4",
       },
     },
     {
       exception_id: 1,
-      exception_category: "iso",
+      exception_category: "reefer",
       display_text: "Truck",
       is_manual: true,
       group: "Truck",
       predicted_value: {
-        value: "HSWW01",
+        value: "HSWW03",
         evidence: "imageI.jpg",
         video_evidence: "videoI.mp4",
       },
       tos_value: {
-        value: "HSWW03",
+        value: "HSWW04",
         evidence: "imageJ.jpg",
         video_evidence: "videoJ.mp4",
       },
@@ -113,7 +114,7 @@ export class AppComponent implements OnInit {
       display_text: "Seals",
       is_manual: true,
       predicted_value: {
-        value: "HSWW01",
+        value: "HSWW05",
         evidence: "imageI.jpg",
         video_evidence: "videoI.mp4",
       },
@@ -125,7 +126,20 @@ export class AppComponent implements OnInit {
       display_text: "Hazard",
       is_manual: true,
       predicted_value: {
-        value: "HSWW01",
+        value: "HSWW06",
+        evidence: "imageI.jpg",
+        video_evidence: "videoI.mp4",
+      },
+    },
+
+    {
+      exception_id: 1,
+      exception_category: "iso",
+      group: "Container",
+      display_text: "ISO",
+      is_manual: true,
+      predicted_value: {
+        value: "HSWW07",
         evidence: "imageI.jpg",
         video_evidence: "videoI.mp4",
       },
@@ -135,7 +149,7 @@ export class AppComponent implements OnInit {
 
 
  flateExceptions:IFlateExceptions[] = []
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private cdRef:ChangeDetectorRef) {
     this.form = this.fb.group({
       exceptions: this.fb.array([]), // FormArray to hold exception FormGroups
     });
@@ -146,8 +160,26 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.processExceptions();
+    const fisrtTabException = this.flateExceptions[0]?.exceptions
+    // console.log(fisrtTabException)
+    // this.totalSteps = []
+    this.totalSteps= fisrtTabException
   }
-
+  tabSwitch:boolean= true
+  onTabChange(e:MatTabChangeEvent){
+    this.tabSwitch= false
+    // requestAnimationFrame(() => {
+      const tabExceptions = this.flateExceptions[e?.index]?.exceptions;
+      this.tabSwitch= true
+        this.totalSteps = tabExceptions;
+        this.currentStep = 0
+    // },);
+   
+this.cdRef.detectChanges()
+  
+   
+ 
+  }
   processExceptions() {
 
     this.flateExceptions =  Object.values(
@@ -178,10 +210,13 @@ export class AppComponent implements OnInit {
     });
   }
 
+  getFormGroupIndex(cat:string){
+    return this.exceptionsData.findIndex(item=>item?.exception_category == cat)
+  
+  }
   getDynamicKey(index:number){
     return this.exceptionsData[index]?.exception_category
   }
-
 
   formGroupAtIndex(index: number) {
     const formArray = this.formArray();
@@ -190,7 +225,6 @@ export class AppComponent implements OnInit {
   }
 
   isRadioSelected(index: number): boolean {
-    debugger
     // checking if radio button is checked for specific formcontrol
     // getting form array
     // we will se if manual valu validation is rquired
@@ -198,6 +232,7 @@ export class AppComponent implements OnInit {
     const mfc = fg?.get('manual');
     const dynamicFc = fg?.get(this.getDynamicKey(index));
     return dynamicFc?.value !== '';
+    return false
   }
 
   onRadioChange(){

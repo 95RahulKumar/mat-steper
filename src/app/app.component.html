@@ -1,11 +1,12 @@
-<mat-tab-group [(selectedIndex)]="selectedTabIndex">
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
   <mat-tab *ngFor="let groupData of flateExceptions let tabIndex = index;" [label]="groupData.group">
     <h3>{{ groupData.group }} Exception</h3>
     <form [formGroup]="form" class="exception">
       <ng-container formArrayName="exceptions">
          <!-- If more than one exception, use stepper -->
+  <!-- <ng-container *ngIf="tabSwitch"> -->
          <mat-horizontal-stepper *ngIf="groupData.exceptions.length > 1" #stepper [(selectedIndex)]="currentStep">
-          <mat-step *ngFor="let step of groupData.exceptions; let i = index;" 
+          <mat-step *ngFor="let step of totalSteps; let i = index;" 
           [completed]="isRadioSelected(i)">
           
           <ng-template matStepLabel>
@@ -14,18 +15,23 @@
           </ng-template>
           
           
-          <ng-container [formGroupName]="i">
-              <mat-radio-group [formControlName]="getDynamicKey(i)" (change)="onRadioChange()">
+          <ng-container [formGroupName]="getFormGroupIndex(step.exception_category)">
+           
+              <mat-radio-group [formControlName]="step.exception_category" (change)="onRadioChange()">
                 
                 <mat-radio-button value="predicted_value">Predicted: {{ step.predicted_value?.value }}</mat-radio-button>
                 <mat-radio-button *ngIf="step.tos_value" value="tos_value">TOS: {{ step.tos_value?.value }}</mat-radio-button>
+                <mat-radio-button *ngIf="step.is_manual" value="manual">
+                   <input formControlName="manual"/>
+                </mat-radio-button>
               </mat-radio-group>
             </ng-container>
      
       </mat-step>
-    </mat-horizontal-stepper>
+         </mat-horizontal-stepper>
+  <!-- </ng-container> -->
     <!-- If only one exception, display radio buttons directly -->
-          <div *ngIf="groupData.exceptions.length === 1">
+          <!-- <div *ngIf="groupData.exceptions.length === 1">
               <ng-container [formGroupName]="tabIndex">
                 <mat-radio-group [formControlName]="getDynamicKey(tabIndex)" (change)="onRadioChange()">
                   <mat-radio-button value="predicted_value">
@@ -36,7 +42,7 @@
                   </mat-radio-button>
                 </mat-radio-group>
               </ng-container>
-              </div>
+              </div> -->
        </ng-container>
   </form>
   </mat-tab>
@@ -45,6 +51,6 @@
 <!-- Navigation Buttons -->
 <div class="action-buttons">
   <button mat-button (click)="prevStep()" [disabled]="isFirstStep()">Back</button>
-  <button mat-button (click)="nextStep()" [disabled]="!isRadioSelected(currentStep) || isLastStep()">Next</button>
-  <button mat-button (click)="submitData()" [disabled]="!isSubmitEnabled()">Submit</button>
+  <button mat-button (click)="nextStep()" [disabled]="isLastStep()">Next</button>
+  <button mat-button (click)="submitData()" >Submit</button>
 </div>
