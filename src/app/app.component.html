@@ -14,17 +14,8 @@
             <mat-icon *ngIf="isRadioSelected(i)">check_circle</mat-icon>
           </ng-template>
           
-          
           <ng-container [formGroupName]="getFormGroupIndex(step.exception_category)">
-           
-              <mat-radio-group [formControlName]="step.exception_category" (change)="onRadioChange()">
-                
-                <mat-radio-button value="predicted_value">Predicted: {{ step.predicted_value?.value }}</mat-radio-button>
-                <mat-radio-button *ngIf="step.tos_value" value="tos_value">TOS: {{ step.tos_value?.value }}</mat-radio-button>
-                <mat-radio-button *ngIf="step.is_manual" value="manual">
-                   <input formControlName="manual"/>
-                </mat-radio-button>
-              </mat-radio-group>
+            <app-radio-control [step]="step"></app-radio-control>
             </ng-container>
      
       </mat-step>

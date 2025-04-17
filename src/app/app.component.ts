@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { SingletonService } from './services/singleton.service';
 import { SortConfigComponent } from './sort-config/sort-config.component';
+import { RadioControlComponent } from './radio-control/radio-control.component';
 export interface IFlateExceptions
 {
     group:string,
@@ -38,7 +39,7 @@ export interface IExceptions{
   selector: 'app-root',
   standalone: true,
   imports: [
-    MatTabsModule,RouterOutlet,SortConfigComponent,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
+    MatTabsModule,RouterOutlet,SortConfigComponent,RadioControlComponent,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
