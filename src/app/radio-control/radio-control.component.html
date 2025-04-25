@@ -1,7 +1,18 @@
+
 <mat-radio-group [formControlName]="step.exception_category" (change)="onRadioChange()">
     <mat-radio-button value="predicted_value">Predicted: {{ step.predicted_value?.value }}</mat-radio-button>
     <mat-radio-button *ngIf="step.tos_value" value="tos_value">TOS: {{ step.tos_value?.value }}</mat-radio-button>
     <mat-radio-button *ngIf="step.is_manual" value="manual">
        <input formControlName="manual"/>
+       <ng-container *ngIf="imageUrl"
+       >
+      <img [src]="imageUrl" alt="" srcset="" height="24px" width="24px">
+      <mat-icon (click)="onDelete(step.exception_category)">delete</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="!imageUrl"
+      
+      >
+      <input type="file" accept="image/*" (change)="onFileChange($event,step.exception_category)">
+   </ng-container>
     </mat-radio-button>
   </mat-radio-group>

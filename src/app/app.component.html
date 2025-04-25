@@ -15,7 +15,8 @@
           </ng-template>
           
           <ng-container [formGroupName]="getFormGroupIndex(step.exception_category)">
-            <app-radio-control [step]="step"></app-radio-control>
+            <app-radio-control [step]="step" (imageEmitter)="handleFileChange($event)"
+            [imageUrl]="getImageUrlValueByCategory(step.exception_category)"></app-radio-control>
             </ng-container>
      
       </mat-step>
@@ -45,3 +46,4 @@
   <button mat-button (click)="nextStep()" [disabled]="isLastStep()">Next</button>
   <button mat-button (click)="submitData()" >Submit</button>
 </div>
+<!-- <app-custom-form-field-control></app-custom-form-field-control> -->

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterOutlet } from '@angular/router';
 import { SingletonService } from './services/singleton.service';
 import { SortConfigComponent } from './sort-config/sort-config.component';
-import { RadioControlComponent } from './radio-control/radio-control.component';
+import { IFile, RadioControlComponent } from './radio-control/radio-control.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { CustomFormFieldControlComponent } from './advanced-search-control/custom-form-field-control/custom-form-field-control.component';
+
 export interface IFlateExceptions
 {
     group:string,
@@ -39,7 +42,7 @@ export interface IExceptions{
   selector: 'app-root',
   standalone: true,
   imports: [
-    MatTabsModule,RouterOutlet,SortConfigComponent,RadioControlComponent,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
+    MatTabsModule,MatFormFieldModule,CustomFormFieldControlComponent,RouterOutlet,SortConfigComponent,RadioControlComponent,MatRadioModule, MatButtonModule, MatStepperModule, ReactiveFormsModule, CommonModule, MatIconModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -205,6 +208,7 @@ this.cdRef.detectChanges()
         this.fb.group({
           [item.exception_category]: [''],
           manual: [''],
+          imageUrl:['']
         })
       );
 
@@ -217,6 +221,21 @@ this.cdRef.detectChanges()
   }
   getDynamicKey(index:number){
     return this.exceptionsData[index]?.exception_category
+  }
+
+  handleFileChange(obj:IFile){
+    const fgIndex = this.getFormGroupIndex(obj?.cat);
+    const fg = this.formGroupAtIndex(fgIndex)
+    const imgFc = fg.get('imageUrl') as FormControl;
+    imgFc?.setValue(obj?.imageUrl)
+    console.log(imgFc?.value);
+  }
+
+  getImageUrlValueByCategory(attCat:string){
+    const fgIndex = this.getFormGroupIndex(attCat);
+    const fg = this.formGroupAtIndex(fgIndex)
+    const imgFc = fg.get('imageUrl') as FormControl;
+    return imgFc?.value
   }
 
   formGroupAtIndex(index: number) {
